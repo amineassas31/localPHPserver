@@ -35,14 +35,20 @@ def handle_request(client_socket):
         request_line = request.split('\n')[0]
         path = request_line.split()[1] if request_line else '/'
 
+
         cleaned_path = path.split('?')[0]
-        php_file_path = os.path.join('www', cleaned_path.lstrip('/'))
+
+
+        base_dir = 'www'
+        php_file_path = os.path.join(base_dir, cleaned_path.lstrip('/'))
+        static_file_path = os.path.join(base_dir, cleaned_path.lstrip('/'))
+
 
         if cleaned_path == '/':
-            php_file_path = os.path.join('www', 'index.php')
+            php_file_path = os.path.join(base_dir, 'index.php')
+
 
         php_executable = 'php8.2.0/php.exe'
-
         if os.path.exists(php_file_path) and php_file_path.endswith('.php'):
             try:
                 result = subprocess.run(
@@ -56,12 +62,36 @@ def handle_request(client_socket):
                     response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n{result.stdout}"
                 else:
                     response = f"HTTP/1.1 500 Internal Server Error\r\n\r\n{result.stderr}"
+                client_socket.send(response.encode('utf-8'))
             except Exception as e:
                 response = f"HTTP/1.1 500 Internal Server Error\r\n\r\n{str(e)}"
-        else:
-            response = 'HTTP/1.1 404 Not Found\r\n\r\n'
+                client_socket.send(response.encode('utf-8'))
 
-        client_socket.send(response.encode('utf-8'))
+        elif os.path.exists(static_file_path):
+            content_type = "text/plain"
+            if static_file_path.endswith('.css'):
+                content_type = "text/css"
+            elif static_file_path.endswith('.js'):
+                content_type = "application/javascript"
+            elif static_file_path.endswith('.png'):
+                content_type = "image/png"
+            elif static_file_path.endswith('.jpg') or static_file_path.endswith('.jpeg'):
+                content_type = "image/jpeg"
+            elif static_file_path.endswith('.html'):
+                content_type = "text/html"
+
+            try:
+                with open(static_file_path, 'rb') as f:
+                    file_content = f.read()
+                response_headers = f"HTTP/1.1 200 OK\r\nContent-Type: {content_type}\r\n\r\n".encode('utf-8')
+                response = response_headers + file_content
+                client_socket.send(response)
+            except Exception as e:
+                response = f"HTTP/1.1 500 Internal Server Error\r\n\r\n{str(e)}".encode('utf-8')
+                client_socket.send(response)
+        else:
+            response = 'HTTP/1.1 404 Not Found\r\n\r\n'.encode('utf-8')
+            client_socket.send(response)
     except Exception as e:
         print(f"Error handling request: {e}")
     finally:

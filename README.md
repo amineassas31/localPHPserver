@@ -4,25 +4,28 @@ Ce projet est un serveur PHP local simple qui permet d'exécuter des fichiers PH
 
 ## Fonctionnalités
 
--   **Exécution de fichiers PHP** : Le serveur peut exécuter des fichiers PHP situés dans le répertoire `www`.
--   **Gestion des erreurs** : Le serveur gère les erreurs PHP et renvoie des réponses HTTP appropriées (200 OK, 404 Not Found, 500 Internal Server Error).
--   **Interface colorée** : Une introduction colorée est affichée lors du démarrage du serveur.
+- **Exécution de fichiers PHP** : Le serveur peut exécuter des fichiers PHP situés dans le répertoire `www`.
+- **Gestion des erreurs** : Le serveur gère les erreurs PHP et renvoie des réponses HTTP appropriées (200 OK, 404 Not Found, 500 Internal Server Error).
+- **Interface colorée** : Une introduction colorée est affichée lors du démarrage du serveur.
+- **Support des chemins dynamiques** : Le serveur gère correctement les requêtes avec des paramètres de chemin ou des requêtes GET.
+- **Personnalisation facile** : Modifiez le chemin de l'exécutable PHP dans le script Python selon vos besoins.
 
 ## Prérequis
 
--   **PHP** : Assurez-vous d'avoir PHP installé sur votre machine. Le script utilise `php8.2.0/php.exe` par défaut, mais vous pouvez modifier ce chemin dans le code si nécessaire.
--   **Python** : Le script est écrit en Python, donc vous devez avoir Python installé pour exécuter le serveur.
+- **PHP** : Assurez-vous d'avoir PHP installé sur votre machine. Le script utilise `php8.2.0/php.exe` par défaut, mais vous pouvez modifier ce chemin dans le code si nécessaire.
+- **Python** : Le script est écrit en Python, donc vous devez avoir Python installé pour exécuter le serveur.
 
 ## Structure du Projet
 
--   **www** : Ce répertoire contient les fichiers PHP que vous souhaitez exécuter. Par défaut, le serveur cherche un fichier `index.php` dans ce répertoire.
--   **localPHPserver.exe** : Exécutable pour démarrer le serveur local.
+- **www** : Ce répertoire contient les fichiers PHP que vous souhaitez exécuter. Par défaut, le serveur cherche un fichier `index.php` dans ce répertoire.
+- **localPHPserver.exe** : Exécutable pour démarrer le serveur local.
+- **server.py** : Le script Python principal pour exécuter le serveur (utilisé pour générer l'exécutable).
 
 ## Utilisation
 
 1. **Téléchargez le projet** : Clonez ou téléchargez ce dépôt sur votre machine.
 2. **Placez vos fichiers PHP** : Placez vos fichiers PHP dans le répertoire `www`.
-3. **Démarrez le serveur** : Exécutez `localPHPserver.exe` pour démarrer le serveur.
+3. **Démarrez le serveur** : Exécutez `localPHPserver.exe` (ou le script Python `server.py`) pour démarrer le serveur.
 4. **Accédez au serveur** : Ouvrez votre navigateur et accédez à `http://localhost:8080`.
 
 ## Exécution avec `localPHPserver.exe`
@@ -33,6 +36,20 @@ Pour exécuter le serveur à l'aide de `localPHPserver.exe`, suivez ces étapes 
 2. **Double-cliquez sur l'exécutable** : Double-cliquez sur `localPHPserver.exe` pour démarrer le serveur.
 3. **Vérifiez la console** : Une introduction colorée devrait apparaître dans la console, indiquant que le serveur est en cours d'exécution.
 4. **Accédez au serveur** : Ouvrez votre navigateur et accédez à `http://localhost:8080` pour voir votre application PHP en action.
+
+## Compilation de l'exécutable (Facultatif)
+
+Si vous souhaitez générer votre propre exécutable à partir du script Python :
+
+1. Installez `pyinstaller` si ce n'est pas déjà fait :
+   ```bash
+   pip install pyinstaller
+   ```
+2. Générez l'exécutable :
+   ```bash
+   pyinstaller --onefile --add-data "php8.2.0/ext;php8.2.0/ext" main.py
+   ```
+3. L'exécutable sera créé dans le dossier `dist`.
 
 ## Code Source
 
@@ -52,12 +69,12 @@ def colorful_intro():
     reset = "\033[0m"
 
     intro = f"""
-{red}{bold} █████╗ ███╗   ███╗██╗███╗   ██╗███████╗{reset}
-{yellow}██╔══██╗████╗ ████║██║████╗  ██║██╔════╝{reset}
-{green}███████║██╔████╔██║██║██╔██╗ ██║█████╗  {reset}
-{blue}██╔══██║██║╚██╔╝██║██║██║╚██╗██║██╔══╝  {reset}
-{red}██║  ██║██║ ╚═╝ ██║██║██║ ╚████║███████╗{reset}
-{yellow}╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝{reset}
+{red}{bold} ███████ █████   █████████ ██████   ████████████{reset}
+{yellow}███╚╚███╚███████ ██████████████╚████████{reset}
+{green}████████████████████████████{reset}
+{blue}███╚╚███████████████████████{reset}
+{red}████████████████████████████{reset}
+{yellow}╚╚╚  ╚╚╚ ╚╚╚╚╚╚╚ ╚╚╚╚╚╚╚  ╚╚╚╚╚╚╚╚{reset}
 {bold}{green}Welcome to AMINE's localPHPserver!{reset}
 """
     print(intro)
@@ -119,3 +136,4 @@ except KeyboardInterrupt:
 finally:
     server_socket.close()
 ```
+
